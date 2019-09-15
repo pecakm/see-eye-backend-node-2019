@@ -3,6 +3,7 @@ const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const app = require("./app");
+const io = require("socket.io");
 
 if (process.env.PRODUCTION === "true") {
   const sslOptions = {
@@ -10,7 +11,18 @@ if (process.env.PRODUCTION === "true") {
     cert: fs.readFileSync("./cert.pem")
   };
 
-  https.createServer(sslOptions, app).listen(process.env.PORT);
+  runServer(https.createServer(sslOptions, app));
 } else {
-  http.createServer(app).listen(process.env.PORT);
+  runServer(http.createServer(app));
+}
+
+function runServer(server) {
+  io(server).on("connection", function(socket) {
+    console.log("a user connected");
+    socket.on("disconnect", function() {
+      console.log("user disconnected");
+    });
+  });
+
+  server.listen(process.env.PORT);
 }
