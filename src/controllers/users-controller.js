@@ -4,7 +4,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const CONSTANTS = require("../helpers/constants");
-const User = require('../models/user');
+const User = require("../models/user");
+const RoomsController = require("./rooms-controller");
 
 exports.signup = (req, res, next) => {
   if (!validPassword(req.body.password)) {
@@ -93,7 +94,15 @@ exports.findUser = (req, res, next) => {
     nickname: req.body.nickname
   }).then(user => {
     if (user && user._id.toString() !== req.userData.id) {
-      res.status(200).json(user._id);
+      RoomsController.findRoom(req.userData.id, user._id).then(room => {
+        if (room) {
+          res.status(200).json(user._id);
+        } else {
+          RoomsController.createRoom(req.userData.id, user._id).then(
+            () => res.status(200).json(user._id)
+          );
+        }
+      });
     } else {
       res.status(404).json({ message: "Not found" });
     }

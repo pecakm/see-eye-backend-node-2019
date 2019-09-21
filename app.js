@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const userRoutes = require("./src/routes/users");
+const roomRoutes = require("./src/routes/rooms");
 
 mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/users", userRoutes);
+app.use("/rooms", roomRoutes);
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
