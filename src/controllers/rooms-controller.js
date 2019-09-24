@@ -56,9 +56,16 @@ exports.getRoomInfo = (req, res, next) => (
       { users: req.userData.id },
       { users: req.params.id }
     ]
-  }).then(room => {
+  }).populate("users").then(room => {
     if (room) {
-      res.status(200).json(room);
+      const userNickname = room.users.find(
+        user => user._id.toString() === req.params.id
+      ).nickname;
+      const response = {
+        id: room._id,
+        nickname: userNickname
+      };
+      res.status(200).json(response);
     } else {
       res.status(404).json({ message: "Not found" });
     }
