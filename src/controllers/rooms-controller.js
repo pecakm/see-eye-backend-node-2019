@@ -21,7 +21,10 @@ exports.findRooms = (req, res, next) => {
     users: req.userData.id
   }).populate("users").then(rooms => {
     if (rooms) {
-      res.status(200).json(rooms);
+      const response = rooms.map(
+        room => room.users.find(user => user._id.toString() !== req.userData.id)
+      );
+      res.status(200).json(response);
     } else {
       res.status(404).json({ message: "Not found" });
     }
