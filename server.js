@@ -18,11 +18,12 @@ if (process.env.PRODUCTION === "true") {
 
 function runServer(server) {
   io(server).on("connection", function(socket) {
-    socket.on("room", function(data) {
-      socket.join(data);
+    socket.on("chat_room", function(data) {
+      socket.join(data.roomId);
+      socket.to(data.roomId).broadcast.emit("chat_online", data.key);
     });
     socket.on("chat_message", function(data) {
-      socket.to(data.room).broadcast.emit("chat_message", data.message);
+      socket.to(data.roomId).broadcast.emit("chat_message", data.message);
     });
   });
 
