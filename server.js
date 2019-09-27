@@ -18,9 +18,12 @@ if (process.env.PRODUCTION === "true") {
 
 function runServer(server) {
   io(server).on("connection", function(socket) {
-    socket.on("chat_room", function(data) {
-      socket.join(data.roomId);
-      socket.to(data.roomId).broadcast.emit("chat_online", data.key);
+    socket.on("chat_room", function(roomId) {
+      socket.join(roomId);
+      socket.to(roomId).broadcast.emit("chat_online");
+    });
+    socket.on("chat_key", function(data) {
+      socket.to(data.roomId).broadcast.emit("chat_key", data.key);
     });
     socket.on("chat_message", function(data) {
       socket.to(data.roomId).broadcast.emit("chat_message", data.message);
