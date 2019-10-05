@@ -23,10 +23,10 @@ function runServer(server) {
       socket.to(roomId).broadcast.emit("chat_online");
     });
     socket.on("chat_key", function(data) {
-      socket.to(data.roomId).broadcast.emit("chat_key", {
-        key: data.key,
-        chatItems: data.chatItems
-      });
+      socket.to(data.roomId).broadcast.emit("chat_key", data.publicKey);
+    });
+    socket.on("chat_key2", function(data) {
+      socket.to(data.roomId).broadcast.emit("chat_key2", data.encryptedKey);
     });
     socket.on("chat_message", function(data) {
       socket.to(data.roomId).broadcast.emit("chat_message", data.message);
